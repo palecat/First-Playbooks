@@ -1,0 +1,52 @@
+---
+- hosts: docker
+  become: true
+
+# Install using the repository
+# https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
+  tasks:
+  - name: Ensure old versions of Docker are not installed
+    package:
+      name:
+        - docker
+        - docker-engine
+      state: absent
+
+  - name: Install prerequisites for Docker repository
+    apt:
+      name: "{{ item }}"
+      state: present
+      update_cache: yes
+    loop:
+      - ca-certificates
+      - curl
+      - gnupg # Ubuntu >= 20.04
+      - lsb-release
+
+  - name: Add GPG key
+    apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      state: present
+
+  - name: Set the stable docker repository
+    apt_repository:
+      repo: >-
+        deb [arch=amd64] https://download.docker.com/linux/ubuntu
+        {{ ansible_lsb.codename }} stable
+      state: present
+      update_cache: yes
+
+  - name: Install docker
+    apt:
+      name: "{{ item }}"
+      state: present
+      update_cache: yes
+    loop:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+
+  - name: Start docker service
+    service:
+      name: docker
+      state: started

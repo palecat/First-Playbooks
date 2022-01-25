@@ -1,0 +1,21 @@
+---
+- hosts: mysql
+  become: true
+
+  tasks:
+    - name: Installing MySQL and dependencies
+      apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      loop:
+        - mysql-server
+        - mysql-client
+        - python3-mysqldb
+        - libmysqlclient-dev
+
+    - name: Start and enable mysql service
+      service:
+        name: mysql
+        state: started
+        enabled: yes
