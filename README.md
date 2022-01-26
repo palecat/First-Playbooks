@@ -33,5 +33,5 @@ ansible-playbook postfix.yml -K --tags init
 
 ```
 # удалить postfix
-ansible-playbook postfix.yml -K --tags init
+ansible-playbook postfix.yml -K --tags drop
 ```
