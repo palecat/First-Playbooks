@@ -3,3 +3,9 @@ localhost
 
 [mysql]
 localhost
+
+[user]
+172.16.248.130
+
+[postfix]
+localhost

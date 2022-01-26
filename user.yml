@@ -1,0 +1,25 @@
+---
+- hosts: user
+  become: true
+  gather_facts: false
+
+  vars:
+    username: user1
+  vars_files:
+    - "vars/vault.yml"
+
+  tasks:
+    - name: Create New User
+      ansible.builtin.user:
+        name: "{{ username }}"
+        groups: sudo
+        password: "{{ vault_user_password | password_hash('sha512') }}"
+        update_password: on_create
+        state: present
+
+    - name: Deploy SSH Public Key
+      ansible.posix.authorized_key:
+        user: "{{ username }}"
+        state: present
+        key: "{{ vault_ssh_public_key }}"
+        path: "/home/{{ username }}/.ssh/id_rsa.pub"
